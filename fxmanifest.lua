@@ -1,9 +1,10 @@
 fx_version 'cerulean'
 games { 'rdr3', 'gta5' }
 
-author 'DOMINONZ'
-description 'Engine Sound script and audio files for custom vehicles'
-repository ''
+author 'D-EngineSound Contributors'
+description 'Advanced FiveM Engine Sound System with Database Persistence and Modern UI'
+version '2.0.0'
+repository 'https://github.com/yourusername/D-EngineSound'
 
 dependencies {
     'qbx_core',

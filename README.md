@@ -1,6 +1,16 @@
-# Custom Engine Sounds Script for FiveM
+# D-EngineSound - Advanced FiveM Engine Sound System
 
-A comprehensive FiveM script that allows players to dynamically change their vehicle engine sounds with over 100+ high-quality engine sound options from various real-world vehicles.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![FiveM](https://img.shields.io/badge/FiveM-Compatible-blue.svg)](https://fivem.net/)
+[![QBX Core](https://img.shields.io/badge/Framework-QBX%20Core-green.svg)](https://github.com/Qbox-project/qbx_core)
+
+A comprehensive and advanced FiveM script that allows players to dynamically change their vehicle engine sounds with over 100+ high-quality engine sound options from various real-world vehicles. Features a modern UI, database persistence, and extensive customization options.
+
+## 🎯 Repository Description
+
+**D-EngineSound** is a feature-rich engine sound replacement system for FiveM servers running QBX Core. It provides players and mechanics with an intuitive interface to customize vehicle engine sounds while maintaining proper permissions, ownership verification, and persistent storage across server restarts.
+
+Perfect for roleplay servers looking to enhance the vehicle customization experience with realistic engine sounds from supercars, muscle cars, motorcycles, and more.
 
 ## Features
 
@@ -24,7 +34,7 @@ A comprehensive FiveM script that allows players to dynamically change their veh
 
 ## Installation
 
-1. **Download & Extract**: Place the `D-EngineSound` folder in your `resources/***/` directory
+1. **Download & Extract**: Place the `D-EngineSound` folder in your `resources/[vehicles]/` directory
 2. **Database Setup**: The script will automatically add a `custom_sound` column to your existing `player_vehicles` table
 3. **Add to server.cfg**: Add `ensure D-EngineSound` to your server configuration file
 4. **Restart Server**: Restart your FiveM server or use `refresh` and `start D-EngineSound`
@@ -321,6 +331,23 @@ if exports.qbx_core:HasPermission(source, 'your.custom.permission') then
 end
 ```
 
+## 📋 Version Information
+
+**Current Version**: 2.0.0
+**Release Date**: July 2025
+**Compatibility**: FiveM latest builds
+**Framework**: QBX Core
+
+### Version History
+- **v2.0.0** - Database persistence, ox_lib integration, ownership verification
+- **v1.0.0** - Basic engine sound replacement functionality
+
+### Upcoming Features
+- Sound categories and filtering
+- Custom sound upload system
+- Integration with vehicle modification scripts
+- Sound preview functionality
+
 ## File Structure
 
 ```
@@ -397,3 +424,74 @@ For support and updates, please contact your server development team or check th
 ---
 
 **Note**: This script is designed for roleplay servers and should be used responsibly. Always ensure you have proper permissions before modifying vehicle sounds in multiplayer environments.
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Here's how you can help improve D-EngineSound:
+
+### How to Contribute
+
+1. **Fork the Repository**: Create your own fork of the project
+2. **Create a Feature Branch**: `git checkout -b feature/your-feature-name`
+3. **Make Your Changes**: Implement your feature or bug fix
+4. **Test Thoroughly**: Ensure your changes work properly
+5. **Submit a Pull Request**: Describe your changes and submit for review
+
+### Contribution Guidelines
+
+#### 🎵 Adding Engine Sounds
+- **High Quality**: Only submit high-quality, clear engine sounds
+- **Proper Attribution**: Credit the original source if applicable
+- **Naming Convention**: Follow the established naming patterns
+- **Testing**: Test sounds in-game before submitting
+
+#### 🐛 Bug Reports
+- Use the issue tracker to report bugs
+- Include detailed reproduction steps
+- Specify your FiveM version and server setup
+- Attach relevant logs or error messages
+
+#### 💡 Feature Requests
+- Check existing issues to avoid duplicates
+- Clearly describe the feature and its benefits
+- Consider the impact on server performance
+- Be open to discussion and feedback
+
+#### 🔧 Code Contributions
+- Follow the existing code style and structure
+- Add comments for complex logic
+- Test your changes thoroughly
+- Update documentation as needed
+
+### Development Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/D-EngineSound.git
+   ```
+
+2. **Set up development environment**:
+   - FiveM server with QBX Core
+   - MySQL database
+   - ox_lib and oxmysql resources
+
+3. **Testing**:
+   - Test with multiple vehicle types
+   - Verify database operations
+   - Check permission system functionality
+
+### Code of Conduct
+
+- Be respectful to all contributors
+- Provide constructive feedback
+- Help newcomers learn and contribute
+- Focus on the project's goals and quality
+
+### Recognition
+
+Contributors will be recognized in:
+- README credits section
+- Release notes
+- Special thanks in documentation
+
+We appreciate all contributions, whether it's code, sounds, documentation, or bug reports!
