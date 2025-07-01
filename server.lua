@@ -315,6 +315,24 @@ RegisterCommand("cleanupsounds", function(source, args, rawCommand)
     end)
 end, false)
 
+-- Export the sounds list for use in client using ox_lib callback system
+lib.callback.register('customsounds:getSoundsList', function(source)
+    print("[D-EngineSound] Client " .. source .. " requested sounds list via callback")
+    
+    local soundsList = {}
+    for _, soundData in pairs(EngineSounds) do
+        if soundData.label and soundData.value then
+            table.insert(soundsList, {
+                label = soundData.label,
+                value = soundData.value
+            })
+        end
+    end
+    
+    print("[D-EngineSound] Sending " .. #soundsList .. " sounds to client " .. source)
+    return soundsList
+end)
+
 -- Handle sounds list request using traditional events (fallback for ox_lib issues)
 RegisterNetEvent('customsounds:requestSoundsList')
 AddEventHandler('customsounds:requestSoundsList', function(plate)
