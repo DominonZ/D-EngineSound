@@ -1,10 +1,16 @@
 local vehicle_sounds = {} 
 
-local vehicle_sounds = {} 
+-- Manual ox_lib import as fallback
+local lib = exports.ox_lib or lib
 
 -- Enhanced debug: Check if lib is available with multiple checks
 CreateThread(function()
     Wait(2000) -- Wait longer for ox_lib to load
+    
+    -- Try multiple ways to get lib
+    if not lib then
+        lib = exports.ox_lib
+    end
     
     -- Check multiple ways
     local libAvailable = lib ~= nil
@@ -17,11 +23,13 @@ CreateThread(function()
     print("  lib.callback available: " .. tostring(callbackAvailable))
     print("  lib.notify available: " .. tostring(notifyAvailable))
     print("  lib.inputDialog available: " .. tostring(inputDialogAvailable))
+    print("  exports.ox_lib available: " .. tostring(exports.ox_lib ~= nil))
     
     if libAvailable and callbackAvailable and notifyAvailable and inputDialogAvailable then
         print("^2[D-EngineSound] ox_lib loaded successfully!^7")
     else
         print("^1[D-EngineSound] ERROR: ox_lib components not fully loaded!^7")
+        print("^3[D-EngineSound] Trying exports.ox_lib instead...^7")
     end
 end)
 
@@ -38,25 +46,32 @@ end)
 RegisterNetEvent('customsounds:showMenu', function(plate)
     -- Enhanced check for lib availability with retry mechanism
     if not lib or not lib.callback or not lib.notify or not lib.inputDialog then
-        print("^1[D-EngineSound] ox_lib not fully available, attempting fallback...^7")
-        
-        -- Try to wait a bit and check again
-        CreateThread(function()
-            local attempts = 0
-            while (not lib or not lib.callback or not lib.notify or not lib.inputDialog) and attempts < 10 do
-                Wait(500)
-                attempts = attempts + 1
-            end
+        -- Try using exports.ox_lib directly
+        if exports.ox_lib then
+            lib = exports.ox_lib
+            print("^3[D-EngineSound] Using exports.ox_lib fallback^7")
+        else
+            print("^1[D-EngineSound] ox_lib not fully available, attempting fallback...^7")
             
-            if lib and lib.callback and lib.notify and lib.inputDialog then
-                print("^2[D-EngineSound] ox_lib loaded after retry, proceeding with menu...^7")
-                TriggerEvent('customsounds:showMenu', plate) -- Retry the menu
-            else
-                -- Ultimate fallback to QBX notification
-                exports.qbx_core:Notify('ox_lib is not available! Please restart the server.', 'error')
-            end
-        end)
-        return
+            -- Try to wait a bit and check again
+            CreateThread(function()
+                local attempts = 0
+                while (not lib or not lib.callback or not lib.notify or not lib.inputDialog) and attempts < 10 do
+                    Wait(500)
+                    lib = exports.ox_lib or lib
+                    attempts = attempts + 1
+                end
+                
+                if lib and lib.callback and lib.notify and lib.inputDialog then
+                    print("^2[D-EngineSound] ox_lib loaded after retry, proceeding with menu...^7")
+                    TriggerEvent('customsounds:showMenu', plate) -- Retry the menu
+                else
+                    -- Ultimate fallback to QBX notification
+                    exports.qbx_core:Notify('ox_lib is not available! Please restart the server.', 'error')
+                end
+            end)
+            return
+        end
     end
     
     print("^2[D-EngineSound] Showing menu for plate: " .. plate .. "^7")
