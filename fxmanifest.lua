@@ -7,12 +7,16 @@ version '2.0.0'
 repository 'https://github.com/yourusername/D-EngineSound'
 
 dependencies {
-    'qbx_core',
     'ox_lib',
+    'qbx_core',
     'oxmysql'
 }
 
 shared_script '@ox_lib/init.lua'
+shared_script 'config.lua'
+
+-- Ensure ox_lib is available
+lua54 'yes'
 
 server_scripts {
 	"server.lua",
