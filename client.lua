@@ -1,126 +1,120 @@
 local vehicle_sounds = {} 
 
--- Manual ox_lib import as fallback
-local lib = exports.ox_lib or lib
-
--- Enhanced debug: Check if lib is available with multiple checks
-CreateThread(function()
-    Wait(2000) -- Wait longer for ox_lib to load
-    
-    -- Try multiple ways to get lib
-    if not lib then
-        lib = exports.ox_lib
-    end
-    
-    -- Check multiple ways
-    local libAvailable = lib ~= nil
-    local callbackAvailable = lib and lib.callback ~= nil
-    local notifyAvailable = lib and lib.notify ~= nil
-    local inputDialogAvailable = lib and lib.inputDialog ~= nil
-    
-    print("^3[D-EngineSound] Debug Info:^7")
-    print("  lib available: " .. tostring(libAvailable))
-    print("  lib.callback available: " .. tostring(callbackAvailable))
-    print("  lib.notify available: " .. tostring(notifyAvailable))
-    print("  lib.inputDialog available: " .. tostring(inputDialogAvailable))
-    print("  exports.ox_lib available: " .. tostring(exports.ox_lib ~= nil))
-    
-    if libAvailable and callbackAvailable and notifyAvailable and inputDialogAvailable then
-        print("^2[D-EngineSound] ox_lib loaded successfully!^7")
-    else
-        print("^1[D-EngineSound] ERROR: ox_lib components not fully loaded!^7")
-        print("^3[D-EngineSound] Trying exports.ox_lib instead...^7")
-    end
-end)
-
-RegisterNetEvent("engine:sound")
-AddEventHandler("engine:sound", function(name,plate)
-    if vehicle_sounds[plate] == nil then
-        vehicle_sounds[plate] = {}
-    end
-    vehicle_sounds[plate].plate = plate
-    vehicle_sounds[plate].name = name
-end)
-
 -- Handle showing the sound selection menu
 RegisterNetEvent('customsounds:showMenu', function(plate)
-    -- Enhanced check for lib availability with retry mechanism
-    if not lib or not lib.callback or not lib.notify or not lib.inputDialog then
-        -- Try using exports.ox_lib directly
-        if exports.ox_lib then
-            lib = exports.ox_lib
-            print("^3[D-EngineSound] Using exports.ox_lib fallback^7")
-        else
-            print("^1[D-EngineSound] ox_lib not fully available, attempting fallback...^7")
-            
-            -- Try to wait a bit and check again
-            CreateThread(function()
-                local attempts = 0
-                while (not lib or not lib.callback or not lib.notify or not lib.inputDialog) and attempts < 10 do
-                    Wait(500)
-                    lib = exports.ox_lib or lib
-                    attempts = attempts + 1
-                end
-                
-                if lib and lib.callback and lib.notify and lib.inputDialog then
-                    print("^2[D-EngineSound] ox_lib loaded after retry, proceeding with menu...^7")
-                    TriggerEvent('customsounds:showMenu', plate) -- Retry the menu
-                else
-                    -- Ultimate fallback to QBX notification
-                    exports.qbx_core:Notify('ox_lib is not available! Please restart the server.', 'error')
-                end
-            end)
-            return
-        end
-    end
-    
     print("^2[D-EngineSound] Showing menu for plate: " .. plate .. "^7")
     
-    -- Get the sounds list from server using ox_lib callback
-    local success, sounds = pcall(function()
-        return lib.callback.await('customsounds:getSoundsList', false)
-    end)
-    
-    if not success then
-        print("^1[D-EngineSound] Error calling callback: " .. tostring(sounds) .. "^7")
-        lib.notify({
-            type = 'error',
-            description = 'Failed to communicate with server'
-        })
+    -- Request sounds list from server using traditional event
+    TriggerServerEvent('customsounds:requestSoundsList', plate)
+end)
+
+-- Handle received sounds list from server
+RegisterNetEvent('customsounds:receiveSoundsList', function(sounds, plate)
+    if not sounds or #sounds == 0 then
+        print("^1[D-EngineSound] No sounds received from server^7")
+        exports.qbx_core:Notify('Failed to load engine sounds list', 'error')
         return
     end
     
-    if not sounds then
-        lib.notify({
-            type = 'error',
-            description = 'Failed to load engine sounds list'
-        })
+    print("^2[D-EngineSound] Successfully received " .. #sounds .. " sounds from server^7")
+    showSoundSelectionDialog(sounds, plate)
+end)
+
+function showSoundSelectionDialog(sounds, plate)
+    print("^2[D-EngineSound] Attempting to show sound selection dialog^7")
+    print("^2[D-EngineSound] Sounds count: " .. #sounds .. "^7")
+    print("^2[D-EngineSound] Plate: " .. plate .. "^7")
+    
+    -- Debug: Check if lib is available
+    local hasLib = lib ~= nil
+    local hasInputDialog = hasLib and lib.inputDialog ~= nil
+    local hasRegisterContext = hasLib and lib.registerContext ~= nil
+    local hasShowContext = hasLib and lib.showContext ~= nil
+    
+    print("^2[D-EngineSound] lib available: " .. tostring(hasLib) .. "^7")
+    print("^2[D-EngineSound] inputDialog available: " .. tostring(hasInputDialog) .. "^7")
+    print("^2[D-EngineSound] registerContext available: " .. tostring(hasRegisterContext) .. "^7")
+    print("^2[D-EngineSound] showContext available: " .. tostring(hasShowContext) .. "^7")
+    
+    -- Try context menu first (more reliable)
+    if hasRegisterContext and hasShowContext then
+        print("^2[D-EngineSound] Using context menu approach^7")
+        showSoundSelectionContext(sounds, plate)
         return
     end
     
-    print("^2[D-EngineSound] Loaded " .. #sounds .. " engine sounds^7")
+    -- Try input dialog with proper format
+    if hasInputDialog then
+        print("^2[D-EngineSound] Using input dialog approach^7")
+        
+        -- Convert sounds to proper format for ox_lib inputDialog
+        local options = {}
+        for i, sound in ipairs(sounds) do
+            if type(sound) == "string" then
+                table.insert(options, {value = sound, label = sound})
+            elseif type(sound) == "table" and sound.value then
+                table.insert(options, sound)
+            else
+                print("^1[D-EngineSound] Invalid sound format: " .. tostring(sound) .. "^7")
+            end
+        end
+        
+        print("^2[D-EngineSound] Formatted options count: " .. #options .. "^7")
+        
+        local input = lib.inputDialog('Engine Sound Selector', {
+            {
+                type = 'select',
+                label = 'Choose Engine Sound',
+                description = 'Select from available engine sounds',
+                icon = 'volume-high',
+                required = true,
+                searchable = true,
+                options = options
+            }
+        })
+        
+        if input and input[1] then
+            print("^2[D-EngineSound] Player selected sound: " .. input[1] .. " for plate: " .. plate .. "^7")
+            TriggerServerEvent('customsounds:applySound', input[1], plate)
+        else
+            print("^3[D-EngineSound] Player cancelled sound selection or input was nil^7")
+        end
+        return
+    end
     
-    -- Create input dialog with searchable select dropdown
-    local input = lib.inputDialog('Engine Sound Selector', {
-        {
-            type = 'select',
-            label = 'Choose Engine Sound',
-            description = 'Select from available engine sounds',
+    -- Fallback notification
+    print("^1[D-EngineSound] No suitable UI method available^7")
+    exports.qbx_core:Notify('Sound selector requires ox_lib. Please contact an administrator.', 'error')
+end
+
+function showSoundSelectionContext(sounds, plate)
+    -- Build context menu options
+    local contextOptions = {}
+    
+    for i, sound in ipairs(sounds) do
+        local soundName = type(sound) == "string" and sound or (sound.value or sound.label or "Unknown")
+        table.insert(contextOptions, {
+            title = soundName,
+            description = 'Apply this engine sound',
             icon = 'volume-high',
-            required = true,
-            searchable = true,
-            options = sounds
-        }
+            onSelect = function()
+                print("^2[D-EngineSound] Player selected sound: " .. soundName .. " for plate: " .. plate .. "^7")
+                TriggerServerEvent('customsounds:applySound', soundName, plate)
+                lib.hideContext()
+            end
+        })
+    end
+    
+    -- Register the context menu
+    lib.registerContext({
+        id = 'engine_sound_selector',
+        title = 'Engine Sound Selector',
+        options = contextOptions
     })
     
-    if input and input[1] then
-        print("^2[D-EngineSound] Player selected sound: " .. input[1] .. " for plate: " .. plate .. "^7")
-        -- Send the selected sound to server to apply (include plate for verification)
-        TriggerServerEvent('customsounds:applySound', input[1], plate)
-    else
-        print("^3[D-EngineSound] Player cancelled sound selection^7")
-    end
-end)
+    -- Show the context menu
+    lib.showContext('engine_sound_selector')
+end
 
 Citizen.CreateThread(function()
     while true do

@@ -315,7 +315,48 @@ RegisterCommand("cleanupsounds", function(source, args, rawCommand)
     end)
 end, false)
 
--- Export the sounds list for use in client using ox_lib callback system
-lib.callback.register('customsounds:getSoundsList', function(source)
-    return EngineSounds
+-- Handle sounds list request using traditional events (fallback for ox_lib issues)
+RegisterNetEvent('customsounds:requestSoundsList')
+AddEventHandler('customsounds:requestSoundsList', function(plate)
+    local src = source
+    print("[D-EngineSound] Client " .. src .. " requested sounds list via event for plate: " .. plate)
+    
+    local soundsList = {}
+    for _, soundData in pairs(EngineSounds) do
+        if soundData.label and soundData.value then
+            table.insert(soundsList, {
+                label = soundData.label,
+                value = soundData.value
+            })
+        end
+    end
+    
+    print("[D-EngineSound] Sending " .. #soundsList .. " sounds to client " .. src .. " via event")
+    TriggerClientEvent('customsounds:receiveSoundsList', src, soundsList, plate)
 end)
+
+-- Debug command to test the sounds menu
+RegisterCommand('testsounds', function(source, args)
+    local src = source
+    local Player = exports.qbx_core:GetPlayer(src)
+    
+    if not Player then
+        TriggerClientEvent('ox_lib:notify', src, {
+            type = 'error',
+            description = 'Player data not found'
+        })
+        return
+    end
+    
+    -- Check admin permission using ACE system
+    if not IsPlayerAceAllowed(src, 'group.admin') then
+        TriggerClientEvent('ox_lib:notify', src, {
+            type = 'error',
+            description = 'You do not have permission to use this command (Admin required)'
+        })
+        return
+    end
+    
+    -- Show the menu directly with a test plate
+    TriggerClientEvent('customsounds:showMenu', src, 'TESTPLAT')
+end, false)
