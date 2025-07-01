@@ -20,6 +20,7 @@ A comprehensive FiveM script that allows players to dynamically change their veh
 - **ox_lib**: Required for the user interface and notifications
 - **oxmysql**: Required for database operations and persistence
 - **MySQL Database**: Required for storing vehicle sound preferences
+- **FiveM Server**: Compatible with the latest FiveM builds
 
 ## Installation
 
