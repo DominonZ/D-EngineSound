@@ -24,10 +24,10 @@ A comprehensive FiveM script that allows players to dynamically change their veh
 
 ## Installation
 
-1. **Download & Extract**: Place the `CUSTOMSOUNDS` folder in your `resources/***/` directory
+1. **Download & Extract**: Place the `D-EngineSound` folder in your `resources/***/` directory
 2. **Database Setup**: The script will automatically add a `custom_sound` column to your existing `player_vehicles` table
-3. **Add to server.cfg**: Add `ensure CUSTOMSOUNDS` to your server configuration file
-4. **Restart Server**: Restart your FiveM server or use `refresh` and `start CUSTOMSOUNDS`
+3. **Add to server.cfg**: Add `ensure D-EngineSound` to your server configuration file
+4. **Restart Server**: Restart your FiveM server or use `refresh` and `start D-EngineSound`
 
 ### Database Structure
 The script automatically modifies your `player_vehicles` table by adding:
@@ -163,7 +163,7 @@ You'll need three types of files for each engine sound:
 
 #### Step 2: File Placement
 ```
-CUSTOMSOUNDS/
+D-EngineSound/
 ├── audioconfig/
 │   ├── your_engine_amp.dat        # Copy and rename existing .dat151.rel
 │   ├── your_engine_game.dat       # Copy and rename existing .dat54.rel
@@ -202,7 +202,7 @@ Add your sound to the `EngineSounds` table in `server.lua`:
 #### Step 5: Restart Resource
 After adding new sounds:
 1. Save all files
-2. Restart the resource: `restart CUSTOMSOUNDS`
+2. Restart the resource: `restart D-EngineSound`
 3. The new sounds will appear in the selection menu
 
 ### Practical Example: Adding a Ferrari LaFerrari Sound
@@ -211,7 +211,7 @@ Let's walk through adding a Ferrari LaFerrari V12 sound as a complete example:
 
 #### 1. Prepare Your Files
 ```
-CUSTOMSOUNDS/
+D-EngineSound/
 ├── audioconfig/
 │   ├── laferrari_amp.dat
 │   ├── laferrari_game.dat
@@ -238,7 +238,7 @@ data_file 'AUDIO_WAVEPACK' 'sfx/dlc_laferrari'
 
 #### 4. Restart and Test
 ```
-restart CUSTOMSOUNDS
+restart D-EngineSound
 ```
 
 Your new sound will now appear in the menu as "Ferrari LaFerrari V12 Hybrid" and be saved to the database like any other sound.
@@ -270,7 +270,7 @@ For consistency, follow this naming pattern:
 ### Testing New Sounds
 
 1. **Add the sound** following steps above
-2. **Restart resource**: `restart CUSTOMSOUNDS`
+2. **Restart resource**: `restart D-EngineSound`
 3. **Test in-game**: Use `/changesound` and select your new sound
 4. **Verify persistence**: Restart server and check if sound loads correctly
 
@@ -324,7 +324,7 @@ end
 ## File Structure
 
 ```
-CUSTOMSOUNDS/
+D-EngineSound/
 ├── audioconfig/          # Engine sound configuration files
 │   ├── *.dat151.rel
 │   ├── *.dat54.rel
@@ -374,7 +374,7 @@ CUSTOMSOUNDS/
 resmon
 
 # Restart the resource
-restart CUSTOMSOUNDS
+restart D-EngineSound
 
 # Check for errors
 con_miniconChannels script:*
