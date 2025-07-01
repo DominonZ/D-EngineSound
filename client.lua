@@ -1,5 +1,15 @@
 local vehicle_sounds = {} 
 
+-- Debug: Check if lib is available
+CreateThread(function()
+    Wait(1000) -- Wait a bit for ox_lib to load
+    if not lib then
+        print("^1[D-EngineSound] ERROR: ox_lib is not loaded! Make sure ox_lib is started before this resource.^7")
+    else
+        print("^2[D-EngineSound] ox_lib loaded successfully!^7")
+    end
+end)
+
 RegisterNetEvent("engine:sound")
 AddEventHandler("engine:sound", function(name,plate)
     if vehicle_sounds[plate] == nil then
@@ -11,34 +21,41 @@ end)
 
 -- Handle showing the sound selection menu
 RegisterNetEvent('customsounds:showMenu', function(plate)
-    -- Get the sounds list from server
-    lib.callback('customsounds:getSoundsList', false, function(sounds)
-        if not sounds then
-            lib.notify({
-                type = 'error',
-                description = 'Failed to load engine sounds list'
-            })
-            return
-        end
-        
-        -- Create input dialog with searchable select dropdown
-        local input = lib.inputDialog('Engine Sound Selector', {
-            {
-                type = 'select',
-                label = 'Choose Engine Sound',
-                description = 'Select from available engine sounds',
-                icon = 'volume-high',
-                required = true,
-                searchable = true,
-                options = sounds
-            }
+    -- Check if lib is available
+    if not lib then
+        -- Fallback to QBX notification if lib is not available
+        exports.qbx_core:Notify('ox_lib is not available! Please restart the server.', 'error')
+        return
+    end
+    
+    -- Get the sounds list from server using ox_lib callback
+    local sounds = lib.callback.await('customsounds:getSoundsList', false)
+    
+    if not sounds then
+        lib.notify({
+            type = 'error',
+            description = 'Failed to load engine sounds list'
         })
-        
-        if input and input[1] then
-            -- Send the selected sound to server to apply (include plate for verification)
-            TriggerServerEvent('customsounds:applySound', input[1], plate)
-        end
-    end)
+        return
+    end
+    
+    -- Create input dialog with searchable select dropdown
+    local input = lib.inputDialog('Engine Sound Selector', {
+        {
+            type = 'select',
+            label = 'Choose Engine Sound',
+            description = 'Select from available engine sounds',
+            icon = 'volume-high',
+            required = true,
+            searchable = true,
+            options = sounds
+        }
+    })
+    
+    if input and input[1] then
+        -- Send the selected sound to server to apply (include plate for verification)
+        TriggerServerEvent('customsounds:applySound', input[1], plate)
+    end
 end)
 
 Citizen.CreateThread(function()

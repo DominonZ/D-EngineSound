@@ -146,10 +146,10 @@ local EngineSounds = {
 -- Initialize database table on resource start
 CreateThread(function()
     -- Check if custom_sound column exists in player_vehicles table
-    MySQL.query('SHOW COLUMNS FROM player_vehicles LIKE "custom_sound"', {}, function(result)
+    exports.oxmysql:execute('SHOW COLUMNS FROM player_vehicles LIKE "custom_sound"', {}, function(result)
         if #result == 0 then
             -- Add custom_sound column if it doesn't exist
-            MySQL.execute('ALTER TABLE player_vehicles ADD COLUMN custom_sound VARCHAR(50) DEFAULT NULL', {}, function(success)
+            exports.oxmysql:execute('ALTER TABLE player_vehicles ADD COLUMN custom_sound VARCHAR(50) DEFAULT NULL', {}, function(success)
                 if success then
                     print('^2[CUSTOMSOUNDS]^7 Successfully added custom_sound column to player_vehicles table')
                 else
@@ -163,24 +163,24 @@ CreateThread(function()
 end)
 
 RegisterCommand("changesound", function(source, args, rawCommand)
-    -- Check if player has admin permissions or mechanic job
-    local hasPermission = false
+    local Player = exports.qbx_core:GetPlayer(source)
     
-    -- Check for admin group
-    if exports.qbx_core:HasPermission(source, 'group.admin') then
-        hasPermission = true
-    else
-        -- Check for mechanic job
-        local Player = exports.qbx_core:GetPlayer(source)
-        if Player and Player.PlayerData.job.name == 'mechanic' then
-            hasPermission = true
-        end
-    end
-    
-    if not hasPermission then
+    if not Player then
         TriggerClientEvent('ox_lib:notify', source, {
             type = 'error',
-            description = 'You do not have permission to change vehicle sounds'
+            description = 'Player data not found'
+        })
+        return
+    end
+    
+    -- Check permissions: Admin via ACE system OR mechanic job
+    local isAdmin = IsPlayerAceAllowed(source, 'group.admin')
+    local isMechanic = (Player.PlayerData.job and Player.PlayerData.job.name == 'mechanic')
+    
+    if not (isAdmin or isMechanic) then
+        TriggerClientEvent('ox_lib:notify', source, {
+            type = 'error',
+            description = 'You do not have permission to change vehicle sounds (Admin or Mechanic required)'
         })
         return
     end
@@ -207,7 +207,7 @@ RegisterCommand("changesound", function(source, args, rawCommand)
     end
     
     -- Check if vehicle exists in player_vehicles table
-    MySQL.query('SELECT id FROM player_vehicles WHERE plate = ? AND citizenid = ?', {plate, Player.PlayerData.citizenid}, function(result)
+    exports.oxmysql:execute('SELECT id FROM player_vehicles WHERE plate = ? AND citizenid = ?', {plate, Player.PlayerData.citizenid}, function(result)
         if result and #result > 0 then
             -- Vehicle is owned, proceed with menu
             TriggerClientEvent('customsounds:showMenu', source, plate)
@@ -243,7 +243,7 @@ AddEventHandler('customsounds:applySound', function(soundId, plate)
         end
         
         -- Update the database with the new sound
-        MySQL.execute('UPDATE player_vehicles SET custom_sound = ? WHERE plate = ? AND citizenid = ?', {
+        exports.oxmysql:execute('UPDATE player_vehicles SET custom_sound = ? WHERE plate = ? AND citizenid = ?', {
             soundId, 
             plate, 
             Player.PlayerData.citizenid
@@ -287,7 +287,7 @@ RegisterNetEvent('customsounds:loadVehicleSound')
 AddEventHandler('customsounds:loadVehicleSound', function(plate)
     if not plate then return end
     
-    MySQL.query('SELECT custom_sound FROM player_vehicles WHERE plate = ? AND custom_sound IS NOT NULL', {plate}, function(result)
+    exports.oxmysql:execute('SELECT custom_sound FROM player_vehicles WHERE plate = ? AND custom_sound IS NOT NULL', {plate}, function(result)
         if result and #result > 0 and result[1].custom_sound then
             -- Apply the saved sound to all clients
             TriggerClientEvent("engine:sound", -1, result[1].custom_sound, plate)
@@ -297,16 +297,17 @@ end)
 
 -- Clean up sounds for deleted vehicles (optional cleanup command for admins)
 RegisterCommand("cleanupsounds", function(source, args, rawCommand)
-    if not exports.qbx_core:HasPermission(source, 'group.admin') then
+    -- Check admin permission using ACE system
+    if not IsPlayerAceAllowed(source, 'group.admin') then
         TriggerClientEvent('ox_lib:notify', source, {
             type = 'error',
-            description = 'You do not have permission to use this command'
+            description = 'You do not have permission to use this command (Admin required)'
         })
         return
     end
     
     -- Clean up orphaned sound entries
-    MySQL.execute('UPDATE player_vehicles SET custom_sound = NULL WHERE custom_sound IS NOT NULL AND (SELECT COUNT(*) FROM player_vehicles pv2 WHERE pv2.plate = player_vehicles.plate) = 0', {}, function(affectedRows)
+    exports.oxmysql:execute('UPDATE player_vehicles SET custom_sound = NULL WHERE custom_sound IS NOT NULL AND (SELECT COUNT(*) FROM player_vehicles pv2 WHERE pv2.plate = player_vehicles.plate) = 0', {}, function(affectedRows)
         TriggerClientEvent('ox_lib:notify', source, {
             type = 'success',
             description = 'Cleaned up ' .. affectedRows .. ' orphaned sound entries'
@@ -314,7 +315,7 @@ RegisterCommand("cleanupsounds", function(source, args, rawCommand)
     end)
 end, false)
 
--- Export the sounds list for use in client
+-- Export the sounds list for use in client using ox_lib callback system
 lib.callback.register('customsounds:getSoundsList', function(source)
     return EngineSounds
 end)
