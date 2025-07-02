@@ -1,7 +1,10 @@
 # D-EngineSound - Advanced FiveM Engine Sound System
 
-#NOTE: Got inspired by SpiritCreations his resource can be found here:
+**NOTE: Got inspired by SpiritCreations his resource can be found here:**
 [SpiritCreations](https://github.com/SpiritsCreations/FiveM-Engine-Sound-Pack)
+
+**NOTE: Credit is due to the original sound creators aswell.**
+
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![FiveM](https://img.shields.io/badge/FiveM-Compatible-blue.svg)](https://fivem.net/)
