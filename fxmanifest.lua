@@ -1,10 +1,10 @@
 fx_version 'cerulean'
 games { 'rdr3', 'gta5' }
 
-author 'D-EngineSound Contributors'
+author 'DOMINONZ'
 description 'Advanced FiveM Engine Sound System with Database Persistence and Modern UI'
-version '2.0.0'
-repository 'https://github.com/yourusername/D-EngineSound'
+version '2.1.0'
+repository 'https://github.com/DominonZ/D-EngineSound'
 
 dependencies {
     'ox_lib',

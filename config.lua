@@ -19,8 +19,8 @@ Config.Debug = true
 -- Resource information
 Config.ResourceInfo = {
     name = "D-EngineSound",
-    version = "2.0.0",
-    author = "D-EngineSound Contributors",
+    version = "2.1.0",
+    author = "DOMINONZ",
     description = "Advanced FiveM Engine Sound System with Database Persistence and Modern UI"
 }
 
