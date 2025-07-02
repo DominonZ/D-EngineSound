@@ -499,9 +499,9 @@ con_miniconChannels script:*
 ## Credits
 
 - **Original Author**: DOMINONZ
-- **Enhanced by**: Custom modifications for QBX Core and ox_lib integration
-- **Audio Sources**: Various high-quality engine sound recordings
-
+- **Enhanced by DOMINONZ with**: Custom modifications for QBX Core and ox_lib integration
+- **Audio Sources**: Various high-quality engine sound recordings from various authors on 5mods.
+- **Script Idea**: SpiritCreations & A friend of mine
 ## License
 
 This script is provided as-is for FiveM server use. Please respect the original audio sources and any applicable licensing terms.
