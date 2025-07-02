@@ -38,12 +38,14 @@ Perfect for roleplay servers looking to enhance the vehicle customization experi
 - **Search Functionality**: Searchable sound selection with ox_lib input system
 - **"All Sounds" Option**: Complete alphabetical list for power users
 - **Fallback System**: Chat-based menu when ox_lib is unavailable
+[UI](https://imgur.com/XMBsCiq)
 
 ### 🔒 **Advanced Security & Permissions**
 - **Permission System**: Only admins and mechanics can change vehicle sounds
 - **Ownership Verification**: Only vehicle owners can modify their vehicle's engine sound
 - **Database Persistence**: Vehicle sounds saved and restored automatically across server restarts
 - **Automatic Sound Loading**: Saved sounds applied when vehicles spawn
+[ADMIN PIC](https://imgur.com/tD0X3n5)
 
 ### 🛠️ **Technical Excellence**
 - **Real-Time Application**: Sounds applied instantly to vehicles
@@ -57,7 +59,6 @@ Perfect for roleplay servers looking to enhance the vehicle customization experi
 - **ox_lib**: Required for the user interface and notifications
 - **oxmysql**: Required for database operations and persistence
 - **MySQL Database**: Required for storing vehicle sound preferences
-- **FiveM Server**: Compatible with the latest FiveM builds
 
 ## Installation
 
