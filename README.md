@@ -11,7 +11,6 @@ A comprehensive and advanced FiveM script that allows players to dynamically cha
 
 **[YOUTUBE PREVIEW](https://youtu.be/qvfjIJzuBrI?si=_SCiPEvNy2DJHsnG)**
 
-t
 
 ## 🎯 Repository Description
 
