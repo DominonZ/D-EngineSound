@@ -11,6 +11,7 @@ A comprehensive and advanced FiveM script that allows players to dynamically cha
 
 **[YOUTUBE PREVIEW](https://youtu.be/qvfjIJzuBrI?si=_SCiPEvNy2DJHsnG)**
 
+**If you are an Author and don't want the Engine Sound to be here on GitHub, just create an issue and pull request!**
 
 ## 🎯 Repository Description
 
