@@ -9,6 +9,9 @@
 
 A comprehensive and advanced FiveM script that allows players to dynamically change their vehicle engine sounds with over 100+ high-quality engine sound options from various real-world vehicles. Features a modern category-based UI, database persistence, regional sound organization, and extensive customization options.
 
+**[YOUTUBE PREVIEW](https://youtu.be/qvfjIJzuBrI?si=_SCiPEvNy2DJHsnG)**
+
+
 ## 🎯 Repository Description
 
 **D-EngineSound** is a feature-rich engine sound replacement system for FiveM servers running QBX Core. It provides players and mechanics with an intuitive regional category-based interface to customize vehicle engine sounds while maintaining proper permissions, ownership verification, and persistent storage across server restarts.
