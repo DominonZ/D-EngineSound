@@ -43,6 +43,7 @@ Config.Permissions = {
     },
     
     -- Allow players to change sounds on any vehicle (if false, only owned vehicles)
+    -- Note: Admins and mechanics can always bypass this setting
     requireVehicleOwnership = true,
     
     -- Alternative permission system (if ACE doesn't work)
