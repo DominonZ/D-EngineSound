@@ -6,15 +6,15 @@ Config = {}
 
 -- Categories for better organization by region
 Config.Categories = {
-    american = "🇺🇸 American",
-    japanese = "🇯🇵 Japanese", 
-    european = "🇪🇺 European",
-    motorcycles = "🏍️ Motorcycles & Bikes",
-    racing = "🏁 Racing & Special"
+    american = "American",
+    japanese = "Japanese", 
+    european = "European",
+    motorcycles = "Motorcycles & Bikes",
+    racing = "Racing & Special"
 }
 
 -- Enable debug mode (shows detailed console output)
-Config.Debug = true
+Config.Debug = false
 
 -- Resource information
 Config.ResourceInfo = {
@@ -61,11 +61,11 @@ Config.Permissions = {
 -- UI preferences and fallback options
 Config.UI = {
     -- Preferred UI method (priority order)
-    preferredMethod = "context", -- "input", "context", "fallback"
+    preferredMethod = "input", -- "input", "context", "fallback"
     
     -- ox_lib input dialog settings
     inputDialog = {
-        title = "Engine Sound Selector",
+        title = "🔊 Engine Sound Selector",
         searchable = true,
         required = true,
         icon = "volume-high"
@@ -188,10 +188,10 @@ Config.Commands = {
 Config.EngineSounds = {
     -- Categories for better organization by region
     categories = {
-        american = "�🇸 American",
-        japanese = "🇯🇵 Japanese", 
-        european = "�🇺 European",
-        motorcycles = "�️ Motorcycles & Bikes",
+        american = "🌎 American",
+        japanese = "🌏 Japanese", 
+        european = "🌍 European",
+        motorcycles = "🏍️ Motorcycles & Bikes",
         racing = "🏁 Racing & Special"
     },
     
