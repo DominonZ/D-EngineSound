@@ -8,11 +8,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
-- Sound category filtering system
 - Custom sound upload interface
 - Integration with vehicle modification scripts
 - Sound preview functionality before selection
 - Bulk sound management for admins
+
+## [2.1.0] - 2025-07-02
+
+### Added
+- **Regional Category System**: Organized sounds by geographic regions instead of brands
+  - 🇺🇸 American (Ford, Chevrolet, Dodge, etc.)
+  - 🇯🇵 Japanese (Honda, Toyota, Nissan, etc.)
+  - 🇪🇺 European (BMW, Mercedes, Audi, Ferrari, etc.)
+  - 🏍️ Motorcycles & Bikes (Harley, Yamaha, etc.)
+  - 🏁 Racing & Special (Formula 1, NASCAR, etc.)
+- **Category-Based Navigation**: Modern context menu system with category selection
+- **Complete Sound Library**: Added all missing engine sounds from fxmanifest.lua (34 additional sounds)
+- **Enhanced Menu System**: 
+  - Main category selection menu
+  - Sub-menus for each region with back navigation
+  - "All Sounds" option for complete list view
+  - Search functionality through ox_lib input system
+- **Fallback Menu System**: Chat-based menu when ox_lib is unavailable
+- **Utility Functions**: Added helper functions for category management in config
+
+### Changed
+- **Sound Organization**: Reorganized all 100+ sounds into logical regional categories
+- **Menu Interface**: Replaced flat sound list with intuitive category-based navigation
+- **User Experience**: Improved navigation with back buttons and category counts
+- **Code Structure**: Enhanced config.lua with utility functions for better maintainability
+
+### Technical Details
+- **Total Sounds**: 100+ engine sounds now properly categorized and accessible
+- **Menu System**: Dual-layer context menu (categories → sounds) with fallback support
+- **Category Distribution**: 
+  - American: 20+ sounds
+  - Japanese: 30+ sounds  
+  - European: 40+ sounds
+  - Motorcycles: 5 sounds
+  - Racing: 4 sounds
+- **Backwards Compatibility**: All existing functionality preserved while adding new features
+
+### Fixed
+- **Missing Sounds**: Added 34 previously unavailable engine sounds to the menu
+- **Category Coverage**: Ensured all sounds from fxmanifest.lua are accessible via the menu
+- **Menu Navigation**: Improved user flow with logical categorization and back navigation
 
 ## [2.0.0] - 2025-07-01
 

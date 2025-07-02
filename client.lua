@@ -17,8 +17,121 @@ RegisterNetEvent('customsounds:receiveSoundsList', function(sounds, plate)
     end
     
     Config:DebugPrint("Successfully received " .. #sounds .. " sounds from server")
-    showSoundSelectionDialog(sounds, plate)
+    
+    -- Check if categories are enabled
+    if Config.EngineSounds.showCategories then
+        showCategorySelectionDialog(sounds, plate)
+    else
+        showSoundSelectionDialog(sounds, plate)
+    end
 end)
+
+function showCategorySelectionDialog(sounds, plate)
+    Config:DebugPrint("Showing category selection dialog")
+    
+    -- Debug: Check if lib is available
+    local hasLib = lib ~= nil
+    local hasRegisterContext = hasLib and lib.registerContext ~= nil
+    local hasShowContext = hasLib and lib.showContext ~= nil
+    
+    if not hasRegisterContext or not hasShowContext then
+        Config:DebugPrint("ox_lib context not available, falling back to sound list")
+        showSoundSelectionDialog(sounds, plate)
+        return
+    end
+    
+    -- Build category options
+    local categoryOptions = {}
+    local categories = Config.EngineSounds.categories
+    
+    for categoryKey, categoryName in pairs(categories) do
+        -- Count sounds in this category
+        local soundCount = 0
+        for _, sound in ipairs(sounds) do
+            if sound.category == categoryKey then
+                soundCount = soundCount + 1
+            end
+        end
+        
+        if soundCount > 0 then
+            table.insert(categoryOptions, {
+                title = categoryName,
+                description = 'Browse ' .. soundCount .. ' engine sounds',
+                icon = 'folder',
+                onSelect = function()
+                    showCategorySounds(sounds, plate, categoryKey, categoryName)
+                end
+            })
+        end
+    end
+    
+    -- Register the category selection menu
+    lib.registerContext({
+        id = 'engine_sound_categories',
+        title = '🔊 Engine Sound Categories',
+        options = categoryOptions
+    })
+    
+    -- Show the category menu
+    lib.showContext('engine_sound_categories')
+end
+
+function showCategorySounds(sounds, plate, categoryKey, categoryName)
+    Config:DebugPrint("Showing sounds for category: " .. categoryKey)
+    
+    -- Filter sounds by category
+    local categorySounds = {}
+    for _, sound in ipairs(sounds) do
+        if sound.category == categoryKey then
+            table.insert(categorySounds, sound)
+        end
+    end
+    
+    -- Build context menu options for this category
+    local contextOptions = {}
+    
+    -- Add back button
+    table.insert(contextOptions, {
+        title = '← Back to Categories',
+        description = 'Return to category selection',
+        icon = 'arrow-left',
+        onSelect = function()
+            showCategorySelectionDialog(sounds, plate)
+        end
+    })
+    
+    -- Add separator
+    table.insert(contextOptions, {
+        title = '─────────────────',
+        disabled = true
+    })
+    
+    -- Add sounds in this category
+    for i, sound in ipairs(categorySounds) do
+        local soundName = sound.label or sound.value or "Unknown"
+        local soundValue = sound.value or soundName
+        table.insert(contextOptions, {
+            title = soundName,
+            description = 'Apply this engine sound',
+            icon = Config.UI.contextMenu.icon,
+            onSelect = function()
+                Config:DebugPrint("Player selected sound: " .. soundName .. " (value: " .. soundValue .. ") for plate: " .. plate)
+                TriggerServerEvent('customsounds:applySound', soundValue, plate)
+                lib.hideContext()
+            end
+        })
+    end
+    
+    -- Register the category sounds menu
+    lib.registerContext({
+        id = 'engine_sound_category_' .. categoryKey,
+        title = categoryName,
+        options = contextOptions
+    })
+    
+    -- Show the category sounds menu
+    lib.showContext('engine_sound_category_' .. categoryKey)
+end
 
 function showSoundSelectionDialog(sounds, plate)
     Config:DebugPrint("Attempting to show sound selection dialog")
@@ -35,6 +148,13 @@ function showSoundSelectionDialog(sounds, plate)
     Config:DebugPrint("inputDialog available: " .. tostring(hasInputDialog))
     Config:DebugPrint("registerContext available: " .. tostring(hasRegisterContext))
     Config:DebugPrint("showContext available: " .. tostring(hasShowContext))
+    
+    -- Check if categories are enabled
+    if Config.EngineSounds.showCategories and hasRegisterContext and hasShowContext then
+        Config:DebugPrint("Using category-based menu system")
+        showCategorySelectionMenu(sounds, plate)
+        return
+    end
     
     -- Use preferred method from config or fallback
     local preferredMethod = Config.UI.preferredMethod
@@ -88,6 +208,109 @@ function showSoundSelectionDialog(sounds, plate)
     -- Fallback: Use QBCore menu system
     Config:DebugPrint("Using QBCore menu fallback")
     showQBCoreMenu(sounds, plate)
+end
+
+-- Category selection menu
+function showCategorySelectionMenu(sounds, plate)
+    Config:DebugPrint("Showing category selection menu")
+    
+    -- Build categories list
+    local categoryOptions = {}
+    local categories = Config.EngineSounds.categories
+    
+    -- Count sounds per category
+    local categoryCounts = {}
+    for _, sound in ipairs(sounds) do
+        local category = sound.category or "other"
+        categoryCounts[category] = (categoryCounts[category] or 0) + 1
+    end
+    
+    -- Build category menu options
+    for categoryKey, categoryName in pairs(categories) do
+        local count = categoryCounts[categoryKey] or 0
+        if count > 0 then
+            table.insert(categoryOptions, {
+                title = categoryName,
+                description = count .. " sounds available",
+                icon = "list",
+                onSelect = function()
+                    showSoundsInCategory(sounds, plate, categoryKey, categoryName)
+                end
+            })
+        end
+    end
+    
+    -- Add "All Sounds" option
+    table.insert(categoryOptions, 1, {
+        title = "🌐 All Sounds",
+        description = #sounds .. " sounds available",
+        icon = "globe",
+        onSelect = function()
+            showSoundSelectionContext(sounds, plate)
+        end
+    })
+    
+    -- Register and show category menu
+    lib.registerContext({
+        id = 'engine_sound_categories',
+        title = '🔊 Select Sound Category',
+        options = categoryOptions
+    })
+    
+    lib.showContext('engine_sound_categories')
+end
+
+-- Show sounds within a specific category
+function showSoundsInCategory(allSounds, plate, categoryKey, categoryName)
+    Config:DebugPrint("Showing sounds in category: " .. categoryKey)
+    
+    -- Filter sounds by category
+    local categorySounds = {}
+    for _, sound in ipairs(allSounds) do
+        if sound.category == categoryKey then
+            table.insert(categorySounds, sound)
+        end
+    end
+    
+    Config:DebugPrint("Found " .. #categorySounds .. " sounds in category " .. categoryKey)
+    
+    -- Build sound options
+    local soundOptions = {}
+    
+    for i, sound in ipairs(categorySounds) do
+        local soundName = sound.label or sound.value or "Unknown"
+        local soundValue = sound.value or soundName
+        table.insert(soundOptions, {
+            title = soundName,
+            description = 'Apply this engine sound',
+            icon = "volume-high",
+            onSelect = function()
+                Config:DebugPrint("Player selected sound: " .. soundName .. " (value: " .. soundValue .. ") for plate: " .. plate)
+                TriggerServerEvent('customsounds:applySound', soundValue, plate)
+                lib.hideContext()
+            end
+        })
+    end
+    
+    -- Add back button
+    table.insert(soundOptions, 1, {
+        title = "⬅️ Back to Categories",
+        description = "Return to category selection",
+        icon = "arrow-left",
+        onSelect = function()
+            -- Re-request sounds list to show categories again
+            TriggerServerEvent('customsounds:requestSoundsList', plate)
+        end
+    })
+    
+    -- Register and show sounds menu
+    lib.registerContext({
+        id = 'engine_sounds_' .. categoryKey,
+        title = categoryName,
+        options = soundOptions
+    })
+    
+    lib.showContext('engine_sounds_' .. categoryKey)
 end
 
 function showSoundSelectionContext(sounds, plate)
@@ -197,177 +420,99 @@ CreateThread(function()
     end
 end)
 
+-- Fallback QBCore menu system
 function showQBCoreMenu(sounds, plate)
-    -- Create a menu using QBCore's menu system or simple text selection
-    local menuOptions = {}
+    Config:DebugPrint("Using QBCore fallback menu")
     
-    -- Create a paginated menu using config values
+    -- Simple chat-based selection as last resort
     local soundsPerPage = Config.UI.fallbackMenu.soundsPerPage
-    local currentPage = 1
     local totalPages = math.ceil(#sounds / soundsPerPage)
     
-    local function showSoundPage(page)
-        local startIndex = (page - 1) * soundsPerPage + 1
-        local endIndex = math.min(page * soundsPerPage, #sounds)
-        
-        if Config.UI.fallbackMenu.showPageInfo then
-            exports.qbx_core:Notify('Engine Sound Selector - Page ' .. page .. '/' .. totalPages, 'primary')
-        end
-        exports.qbx_core:Notify('Use chat commands to select sounds:', 'info')
-        
-        for i = startIndex, endIndex do
-            local sound = sounds[i]
-            local soundName = type(sound) == "string" and sound or (sound.label or sound.value or "Unknown")
-            local soundValue = type(sound) == "string" and sound or (sound.value or soundName)
-            
-            exports.qbx_core:Notify('[' .. (i - startIndex + 1) .. '] ' .. soundName, 'info')
-        end
-        
-        exports.qbx_core:Notify('Type /soundselect [1-' .. (endIndex - startIndex + 1) .. '] to choose', 'success')
-        if page < totalPages then
-            exports.qbx_core:Notify('Type /soundnext for next page', 'success')
-        end
-        if page > 1 then
-            exports.qbx_core:Notify('Type /soundprev for previous page', 'success')
-        end
-        exports.qbx_core:Notify('Type /soundcancel to cancel', 'error')
-        
-        -- Store current context for commands
-        currentSoundSelection = {
-            sounds = sounds,
-            plate = plate,
-            page = page,
-            startIndex = startIndex,
-            endIndex = endIndex
-        }
-    end
-    
-    -- Start with first page
-    showSoundPage(1)
+    -- Show first page
+    showSoundsPage(sounds, plate, 1, totalPages)
 end
 
--- Global variable to store current selection context
-local currentSoundSelection = nil
-
--- Command to select sound by number
-RegisterCommand(Config.UI.fallbackMenu.commands.select, function(source, args)
-    if not currentSoundSelection then
-        exports.qbx_core:Notify('No sound selection active', 'error')
-        return
+function showSoundsPage(sounds, plate, currentPage, totalPages)
+    local soundsPerPage = Config.UI.fallbackMenu.soundsPerPage
+    local startIndex = (currentPage - 1) * soundsPerPage + 1
+    local endIndex = math.min(startIndex + soundsPerPage - 1, #sounds)
+    
+    -- Send page info to chat
+    TriggerEvent('chat:addMessage', {
+        color = {255, 255, 0},
+        multiline = true,
+        args = {"🔊 Engine Sounds", "Page " .. currentPage .. " of " .. totalPages .. " | Use /" .. Config.UI.fallbackMenu.commands.select .. " [number] to select"}
+    })
+    
+    -- List sounds on this page
+    for i = startIndex, endIndex do
+        local sound = sounds[i]
+        local soundName = sound.label or sound.value or "Unknown"
+        local displayIndex = i - startIndex + 1
+        
+        TriggerEvent('chat:addMessage', {
+            color = {255, 255, 255},
+            args = {"[" .. displayIndex .. "]", soundName}
+        })
     end
+    
+    -- Store page data for selection
+    fallbackMenuData = {
+        sounds = sounds,
+        plate = plate,
+        currentPage = currentPage,
+        totalPages = totalPages,
+        startIndex = startIndex,
+        endIndex = endIndex
+    }
+end
+
+-- Register fallback commands
+RegisterCommand(Config.UI.fallbackMenu.commands.select, function(source, args)
+    if not fallbackMenuData then return end
     
     local selection = tonumber(args[1])
-    if not selection then
-        exports.qbx_core:Notify('Please provide a valid number', 'error')
+    if not selection or selection < 1 or selection > (fallbackMenuData.endIndex - fallbackMenuData.startIndex + 1) then
+        TriggerEvent('chat:addMessage', {
+            color = {255, 0, 0},
+            args = {"Error", "Invalid selection. Use a number between 1 and " .. (fallbackMenuData.endIndex - fallbackMenuData.startIndex + 1)}
+        })
         return
     end
     
-    local soundIndex = currentSoundSelection.startIndex + selection - 1
-    if soundIndex < currentSoundSelection.startIndex or soundIndex > currentSoundSelection.endIndex then
-        exports.qbx_core:Notify('Invalid selection. Choose between 1 and ' .. (currentSoundSelection.endIndex - currentSoundSelection.startIndex + 1), 'error')
-        return
+    local soundIndex = fallbackMenuData.startIndex + selection - 1
+    local selectedSound = fallbackMenuData.sounds[soundIndex]
+    
+    if selectedSound then
+        TriggerServerEvent('customsounds:applySound', selectedSound.value, fallbackMenuData.plate)
+        fallbackMenuData = nil
     end
-    
-    local sound = currentSoundSelection.sounds[soundIndex]
-    local soundValue = type(sound) == "string" and sound or (sound.value or sound.label or "Unknown")
-    
-    Config:DebugPrint("Player selected sound: " .. soundValue .. " for plate: " .. currentSoundSelection.plate)
-    TriggerServerEvent('customsounds:applySound', soundValue, currentSoundSelection.plate)
-    
-    exports.qbx_core:Notify('Applied sound: ' .. (sound.label or soundValue), 'success')
-    currentSoundSelection = nil
 end, false)
 
--- Command to go to next page
 RegisterCommand(Config.UI.fallbackMenu.commands.next, function(source, args)
-    if not currentSoundSelection then
-        exports.qbx_core:Notify('No sound selection active', 'error')
-        return
-    end
-    
-    local soundsPerPage = Config.UI.fallbackMenu.soundsPerPage
-    local totalPages = math.ceil(#currentSoundSelection.sounds / soundsPerPage)
-    if currentSoundSelection.page < totalPages then
-        local newPage = currentSoundSelection.page + 1
-        local startIndex = (newPage - 1) * soundsPerPage + 1
-        local endIndex = math.min(newPage * soundsPerPage, #currentSoundSelection.sounds)
-        
-        if Config.UI.fallbackMenu.showPageInfo then
-            exports.qbx_core:Notify('Engine Sound Selector - Page ' .. newPage .. '/' .. totalPages, 'primary')
-        end
-        exports.qbx_core:Notify('Use chat commands to select sounds:', 'info')
-        
-        for i = startIndex, endIndex do
-            local sound = currentSoundSelection.sounds[i]
-            local soundName = type(sound) == "string" and sound or (sound.label or sound.value or "Unknown")
-            exports.qbx_core:Notify('[' .. (i - startIndex + 1) .. '] ' .. soundName, 'info')
-        end
-        
-        exports.qbx_core:Notify('Type /' .. Config.UI.fallbackMenu.commands.select .. ' [1-' .. (endIndex - startIndex + 1) .. '] to choose', 'success')
-        if newPage < totalPages then
-            exports.qbx_core:Notify('Type /' .. Config.UI.fallbackMenu.commands.next .. ' for next page', 'success')
-        end
-        exports.qbx_core:Notify('Type /' .. Config.UI.fallbackMenu.commands.prev .. ' for previous page', 'success')
-        exports.qbx_core:Notify('Type /' .. Config.UI.fallbackMenu.commands.cancel .. ' to cancel', 'error')
-        
-        currentSoundSelection.page = newPage
-        currentSoundSelection.startIndex = startIndex
-        currentSoundSelection.endIndex = endIndex
-    else
-        exports.qbx_core:Notify('Already on last page', 'error')
+    if not fallbackMenuData then return end
+    if fallbackMenuData.currentPage < fallbackMenuData.totalPages then
+        showSoundsPage(fallbackMenuData.sounds, fallbackMenuData.plate, fallbackMenuData.currentPage + 1, fallbackMenuData.totalPages)
     end
 end, false)
 
--- Command to go to previous page
 RegisterCommand(Config.UI.fallbackMenu.commands.prev, function(source, args)
-    if not currentSoundSelection then
-        exports.qbx_core:Notify('No sound selection active', 'error')
-        return
-    end
-    
-    local soundsPerPage = Config.UI.fallbackMenu.soundsPerPage
-    if currentSoundSelection.page > 1 then
-        local newPage = currentSoundSelection.page - 1
-        local startIndex = (newPage - 1) * soundsPerPage + 1
-        local endIndex = math.min(newPage * soundsPerPage, #currentSoundSelection.sounds)
-        
-        if Config.UI.fallbackMenu.showPageInfo then
-            exports.qbx_core:Notify('Engine Sound Selector - Page ' .. newPage .. '/' .. math.ceil(#currentSoundSelection.sounds / soundsPerPage), 'primary')
-        end
-        exports.qbx_core:Notify('Use chat commands to select sounds:', 'info')
-        
-        for i = startIndex, endIndex do
-            local sound = currentSoundSelection.sounds[i]
-            local soundName = type(sound) == "string" and sound or (sound.label or sound.value or "Unknown")
-            exports.qbx_core:Notify('[' .. (i - startIndex + 1) .. '] ' .. soundName, 'info')
-        end
-        
-        exports.qbx_core:Notify('Type /' .. Config.UI.fallbackMenu.commands.select .. ' [1-' .. (endIndex - startIndex + 1) .. '] to choose', 'success')
-        if newPage < math.ceil(#currentSoundSelection.sounds / soundsPerPage) then
-            exports.qbx_core:Notify('Type /' .. Config.UI.fallbackMenu.commands.next .. ' for next page', 'success')
-        end
-        if newPage > 1 then
-            exports.qbx_core:Notify('Type /' .. Config.UI.fallbackMenu.commands.prev .. ' for previous page', 'success')
-        end
-        exports.qbx_core:Notify('Type /' .. Config.UI.fallbackMenu.commands.cancel .. ' to cancel', 'error')
-        
-        currentSoundSelection.page = newPage
-        currentSoundSelection.startIndex = startIndex
-        currentSoundSelection.endIndex = endIndex
-    else
-        exports.qbx_core:Notify('Already on first page', 'error')
+    if not fallbackMenuData then return end
+    if fallbackMenuData.currentPage > 1 then
+        showSoundsPage(fallbackMenuData.sounds, fallbackMenuData.plate, fallbackMenuData.currentPage - 1, fallbackMenuData.totalPages)
     end
 end, false)
 
--- Command to cancel selection
 RegisterCommand(Config.UI.fallbackMenu.commands.cancel, function(source, args)
-    if currentSoundSelection then
-        exports.qbx_core:Notify('Sound selection cancelled', 'error')
-        currentSoundSelection = nil
-    else
-        exports.qbx_core:Notify('No sound selection active', 'error')
-    end
+    fallbackMenuData = nil
+    TriggerEvent('chat:addMessage', {
+        color = {255, 255, 0},
+        args = {"🔊 Engine Sounds", "Selection cancelled"}
+    })
 end, false)
+
+-- Variable to store fallback menu data
+local fallbackMenuData = nil
 
 -- Handle engine sound assignment from server
 RegisterNetEvent("engine:sound")

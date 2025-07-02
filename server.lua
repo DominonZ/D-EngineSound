@@ -194,7 +194,8 @@ lib.callback.register('customsounds:getSoundsList', function(source)
         if soundData.label and soundData.value then
             table.insert(soundsList, {
                 label = soundData.label,
-                value = soundData.value
+                value = soundData.value,
+                category = soundData.category or "other"
             })
         end
     end
@@ -214,7 +215,8 @@ AddEventHandler('customsounds:requestSoundsList', function(plate)
         if soundData.label and soundData.value then
             table.insert(soundsList, {
                 label = soundData.label,
-                value = soundData.value
+                value = soundData.value,
+                category = soundData.category or "other"
             })
         end
     end

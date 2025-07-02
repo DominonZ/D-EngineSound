@@ -7,25 +7,46 @@
 [![FiveM](https://img.shields.io/badge/FiveM-Compatible-blue.svg)](https://fivem.net/)
 [![QBX Core](https://img.shields.io/badge/Framework-QBX%20Core-green.svg)](https://github.com/Qbox-project/qbx_core)
 
-A comprehensive and advanced FiveM script that allows players to dynamically change their vehicle engine sounds with over 100+ high-quality engine sound options from various real-world vehicles. Features a modern UI, database persistence, and extensive customization options.
+A comprehensive and advanced FiveM script that allows players to dynamically change their vehicle engine sounds with over 100+ high-quality engine sound options from various real-world vehicles. Features a modern category-based UI, database persistence, regional sound organization, and extensive customization options.
 
 ## 🎯 Repository Description
 
-**D-EngineSound** is a feature-rich engine sound replacement system for FiveM servers running QBX Core. It provides players and mechanics with an intuitive interface to customize vehicle engine sounds while maintaining proper permissions, ownership verification, and persistent storage across server restarts.
+**D-EngineSound** is a feature-rich engine sound replacement system for FiveM servers running QBX Core. It provides players and mechanics with an intuitive regional category-based interface to customize vehicle engine sounds while maintaining proper permissions, ownership verification, and persistent storage across server restarts.
 
-Perfect for roleplay servers looking to enhance the vehicle customization experience with realistic engine sounds from supercars, muscle cars, motorcycles, and more.
+Perfect for roleplay servers looking to enhance the vehicle customization experience with realistic engine sounds organized by geographic regions - from American muscle cars to Japanese sports cars, European supercars, motorcycles, and racing vehicles.
 
-## Features
+## ✨ Features
 
-- **100+ Engine Sounds**: Wide variety of engine sounds from motorcycles, sports cars, supercars, muscle cars, and more
+### 🔊 **Complete Sound Library**
+- **100+ Engine Sounds**: Comprehensive collection of high-quality engine sounds
+- **Regional Organization**: Sounds organized by geographic regions for intuitive browsing
+- **Real Vehicle Sounds**: Authentic engine sounds from real-world vehicles
+
+### 🗺️ **Regional Category System**
+- 🇺🇸 **American**: Ford, Chevrolet, Dodge muscle cars and performance vehicles
+- 🇯🇵 **Japanese**: Honda, Toyota, Nissan sports and tuner cars  
+- 🇪🇺 **European**: BMW, Mercedes, Ferrari, Lamborghini supercars and luxury vehicles
+- 🏍️ **Motorcycles & Bikes**: Various motorcycle and bike engine sounds
+- 🏁 **Racing & Special**: Formula 1, NASCAR, and specialized racing engines
+
+### 🎮 **Enhanced User Interface**
+- **Category-Based Navigation**: Intuitive menu system organized by vehicle regions
+- **Context Menu System**: Modern ox_lib context menus with back navigation
+- **Search Functionality**: Searchable sound selection with ox_lib input system
+- **"All Sounds" Option**: Complete alphabetical list for power users
+- **Fallback System**: Chat-based menu when ox_lib is unavailable
+
+### 🔒 **Advanced Security & Permissions**
 - **Permission System**: Only admins and mechanics can change vehicle sounds
-- **User-Friendly Interface**: Searchable dropdown menu using ox_lib for easy sound selection
-- **Real-Time Application**: Sounds are applied instantly to the vehicle
-- **Descriptive Names**: All sounds have clear, descriptive names instead of cryptic codes
-- **Cross-Framework Support**: Built for QBX Core framework
-- **Database Persistence**: Vehicle sounds are saved and restored automatically across server restarts
-- **Ownership Verification**: Only vehicle owners can change their vehicle's engine sound
-- **Automatic Sound Loading**: Saved sounds are automatically applied when vehicles spawn
+- **Ownership Verification**: Only vehicle owners can modify their vehicle's engine sound
+- **Database Persistence**: Vehicle sounds saved and restored automatically across server restarts
+- **Automatic Sound Loading**: Saved sounds applied when vehicles spawn
+
+### 🛠️ **Technical Excellence**
+- **Real-Time Application**: Sounds applied instantly to vehicles
+- **Cross-Framework Support**: Built for QBX Core framework  
+- **Performance Optimized**: Efficient tracking and sound application
+- **Modern Dependencies**: ox_lib UI and oxmysql database integration
 
 ## Requirements
 
@@ -86,17 +107,31 @@ custom_sound VARCHAR(50) DEFAULT NULL
 - **Database Integrity**: Built-in cleanup tools for maintaining database health
 - **Performance Optimized**: Efficient querying and caching to minimize database load
 
-## Usage
+## 🎯 Usage
 
 ### For Players
-1. Get in a vehicle **that you own**
-2. Type `/changesound` in chat
-3. Select your desired engine sound from the searchable menu
-4. Your selection is automatically saved and will persist through server restarts!
+1. **Get in a vehicle that you own** (must be in your `player_vehicles` database table)
+2. **Type `/changesound`** in chat to open the sound selection menu
+3. **Choose a category** from the regional menu:
+   - 🇺🇸 American (Ford, Chevrolet, Dodge, etc.)
+   - 🇯🇵 Japanese (Honda, Toyota, Nissan, etc.)  
+   - 🇪🇺 European (BMW, Mercedes, Ferrari, etc.)
+   - 🏍️ Motorcycles & Bikes
+   - 🏁 Racing & Special
+   - 📋 All Sounds (complete alphabetical list)
+4. **Select your desired engine sound** from the category
+5. **Use the back button** to return to the main category menu
+6. **Your selection is automatically saved** and will persist through server restarts!
+
+### Alternative Navigation
+- **Search Option**: Use the search functionality to quickly find specific sounds
+- **Fallback Menu**: If ox_lib is unavailable, a chat-based menu system will activate automatically
 
 ### For Administrators
-- Grant players access by giving them the `mechanic` job or `admin` group permissions
-- All sound changes are logged and can be monitored
+- **Grant Access**: Give players the `mechanic` job or `admin` group permissions
+- **Monitor Changes**: All sound changes are logged in the console for tracking
+- **Database Cleanup**: Use `/cleanupsounds` to maintain database integrity
+- **Debug Tools**: Use `/testsounds` and `/checkperms` for troubleshooting
 
 ## Permission System
 
@@ -110,56 +145,75 @@ The script uses a dual permission system:
 - Players with the `mechanic` job can use the script
 - Perfect for roleplay scenarios where mechanics customize vehicles
 
-## Available Engine Sounds
+## 🎵 Available Engine Sounds
 
-The script includes sounds from various vehicle categories:
+The script includes **100+ engine sounds** organized by geographic regions for intuitive browsing:
 
-### Motorcycles & Bikes
-- 2 Stroke Dirt Bike
-- BMW S1000RR I4
-- Yamaha MT-09/FZ-09 I3
-- Suzuki GSX-R 1000 I4 Yoshimura
-- Yamaha Raptor 700cc I1
+### 🇺🇸 American Muscle & Performance (20+ sounds)
+- **Chevrolet**: Camaro SS LS3, Corvette variants (LS6, LS3, ZR1 LT5), Duramax Diesel
+- **Dodge**: Challenger HEMI & Hellcat Redeye, Viper SRT V10 variants, Charger R/T 426 Hemi
+- **Ford**: Mustang GT 5.0 & Shelby GT500, Focus RS Ecoboost, Shelby Predator V8
+- **Others**: Chrysler 300C SRT-8, Cammed Mustang 5.0L
 
-### Japanese Sports Cars
-- Toyota Supra 2JZ variants
-- Honda NSX, S2000, Civic Type R
-- Nissan GTR R35, Skyline R34, 350Z variants
-- Mazda RX-7, RX-8, Miata (various rotary engines)
-- Mitsubishi Lancer Evolution variants
-- Subaru WRX STI
+### 🇯🇵 Japanese Sports & Tuner Cars (30+ sounds)
+- **Toyota**: Supra 2JZ variants (A80 F&F, A90 B58 Tuned), AE86 4AGE, 1JZ-GTE
+- **Honda**: NSX C30A, S2000 F20C, Civic B16A (F&F), K20A VTEC
+- **Nissan**: GTR R35 VR38DETT, Skyline GTR R34 (2F2F), 350Z variants, SR20DET, RB26DETT
+- **Mazda**: RX-7 FD3S, RX-8 Renesis, various rotary engines (13B-REW, 26B, 20B), Miata MX-5
+- **Others**: Mitsubishi Evo 4G63T & 4B11T, Subaru WRX STI EJ25, Lexus LFA V10
 
-### European Supercars
-- Ferrari (F40, F50, 458, 488, 812 Superfast)
-- Lamborghini (Aventador, Huracan, Gallardo, Murcielago)
-- McLaren (P1, 720S, MP4/4 F1)
-- Porsche (911 variants, GT3 RS)
-- Pagani (Huayra, Zonda)
-- Bugatti (Veyron, Chiron)
+### 🇪🇺 European Supercars & Luxury (40+ sounds)
+- **Ferrari**: F50GT, Testarossa, 458, 488 GTB, 812 Superfast, F40, 246 Dino GT
+- **Lamborghini**: Aventador SVJ, Veneno, Huracan, Urus, Countach, Gallardo, Murcielago
+- **McLaren**: MP4/4 F1, P1, 720S
+- **Porsche**: 911 variants (GT3RS, Tubi Style), RS 4.0L Flat-6
+- **Mercedes-AMG**: One PU106C, GTR, SLS AMG, C63 M156, CLK GTR
+- **Others**: Audi RS4 & R8, BMW M3 GTR & M4, Pagani Huayra & Zonda, Bugatti Veyron & Chiron, Koenigsegg Agera & Regera
 
-### American Muscle
-- Chevrolet (Corvette variants, Camaro Z28, SS)
-- Dodge (Challenger Hellcat, Viper, Charger R/T)
-- Ford (Mustang GT, Shelby GT500, Focus RS)
+### 🏍️ Motorcycles & Bikes (5 sounds)
+- **Sport Bikes**: BMW S1000RR I4, Suzuki GSX-R 1000 Yoshimura
+- **Naked Bikes**: Yamaha MT-09/FZ-09 I3
+- **Off-Road**: 2 Stroke Dirt Bike, Yamaha Raptor 700cc
 
-### Luxury & Premium
-- Mercedes-AMG (One, GTR, C63, SLS)
-- BMW (M3 GTR, M4)
-- Audi (RS4, R8)
-- Bentley, Brabus, Jaguar F-TYPE
+### 🏁 Racing & Special Vehicles (4 sounds)
+- **Formula Racing**: Classic Formula 1 V10, McLaren MP4/4 F1 V6
+- **Stock Car**: NASCAR 7.0L V8
+- **Rally**: Skoda Fabia R5 WRC I4
+- **Drag Racing**: Twin-Charged V8 Supercharged Dragster
 
-### Racing & Special
-- Formula 1 V10
-- NASCAR V8
-- WRC Rally cars
-- Dragster engines
+### 🔍 Menu Navigation Features
+- **Category Selection**: Browse sounds by region for easier discovery
+- **Back Navigation**: Easy return to main menu from any category
+- **Complete List**: "All Sounds" option shows every sound alphabetically
+- **Search Function**: Quick search through the entire sound library
+- **Sound Counts**: Each category shows the number of available sounds
 
-## Commands
+## 📋 Commands
 
 | Command | Permission | Description |
 |---------|------------|-------------|
-| `/changesound` | Admin or Mechanic | Opens the engine sound selection menu (only works on owned vehicles) |
+| `/changesound` | Admin or Mechanic | Opens the regional category-based engine sound selection menu (only works on owned vehicles) |
 | `/cleanupsounds` | Admin Only | Cleans up orphaned sound entries in the database |
+| `/testsounds` | Admin Only | Test the sound selection menu with a test plate (debug command) |
+| `/checkperms` | Any Player | Check your current permissions and job status |
+
+### Command Details
+
+#### `/changesound`
+- **Requirement**: Must be in a vehicle you own and have admin/mechanic permissions
+- **Function**: Opens the modern category-based menu system
+- **Menu Flow**: Category Selection → Sound Selection → Application
+- **Fallback**: Automatically switches to chat-based menu if ox_lib is unavailable
+
+#### `/cleanupsounds`
+- **Requirement**: Admin permissions only
+- **Function**: Removes orphaned sound entries for deleted vehicles
+- **Safety**: Only affects vehicles no longer in the database
+- **Feedback**: Shows count of cleaned entries
+
+#### Debug Commands
+- **`/testsounds`**: Opens the sound menu without vehicle ownership checks (admin only)
+- **`/checkperms`**: Displays your current permission level and job status
 
 ## Configuration
 
@@ -198,18 +252,18 @@ data_file 'AUDIO_WAVEPACK' 'sfx/dlc_your_engine'
 ```
 
 #### Step 4: Update server.lua
-Add your sound to the `EngineSounds` table in `server.lua`:
+Add your sound to the `sounds` table in `config.lua` under the appropriate category:
 
 ```lua
--- Add this entry to the EngineSounds table
-{label = "Your Custom Engine Description", value = "your_engine_id"},
+-- Add this entry to the Config.EngineSounds.sounds table
+{label = "Your Custom Engine Description", value = "your_engine_id", category = "american"},
 ```
 
 **Example Addition:**
 ```lua
--- In the appropriate category (e.g., after American Muscle section)
-{label = "Custom Supercharged V12", value = "customv12sc"},
-{label = "Turbo Diesel V6", value = "tdieselv6"},
+-- In the appropriate category section (e.g., American muscle cars)
+{label = "Custom Supercharged V12", value = "customv12sc", category = "american"},
+{label = "Turbo Diesel V6", value = "tdieselv6", category = "european"},
 ```
 
 #### Step 5: Restart Resource
@@ -243,10 +297,10 @@ data_file 'AUDIO_SOUNDDATA' 'audioconfig/laferrari_sounds.dat'
 data_file 'AUDIO_WAVEPACK' 'sfx/dlc_laferrari'
 ```
 
-#### 3. Add to server.lua EngineSounds table
+#### 3. Add to config.lua EngineSounds table
 ```lua
--- In the Ferrari section
-{label = "Ferrari LaFerrari V12 Hybrid", value = "laferrari"},
+-- In the appropriate category section (e.g., European supercars)
+{label = "Ferrari LaFerrari V12 Hybrid", value = "laferrari", category = "european"},
 ```
 
 #### 4. Restart and Test
@@ -290,9 +344,9 @@ For consistency, follow this naming pattern:
 ### Troubleshooting New Sounds
 
 **Sound not appearing in menu?**
-- Check `server.lua` - ensure entry is added to `EngineSounds` table
-- Verify syntax (commas, brackets, quotes)
-- Restart the resource
+- Check `config.lua` - ensure entry is added to `Config.EngineSounds.sounds` table with proper category
+- Verify syntax (commas, brackets, quotes, category assignment)
+- Restart the resource: `restart D-EngineSound`
 
 **Sound not playing?**
 - Check file paths in `fxmanifest.lua`
@@ -336,20 +390,28 @@ end
 
 ## 📋 Version Information
 
-**Current Version**: 2.0.0
-**Release Date**: July 2025
-**Compatibility**: FiveM latest builds
-**Framework**: QBX Core
+**Current Version**: 2.1.0  
+**Release Date**: July 2, 2025  
+**Compatibility**: FiveM latest builds  
+**Framework**: QBX Core  
+
+### 🆕 Latest Changes (v2.1.0)
+- **Regional Category System**: Sounds organized by geographic regions (American, Japanese, European, etc.)
+- **Enhanced Navigation**: Category-based menu with back buttons and sub-menus  
+- **Complete Sound Library**: All 100+ sounds from fxmanifest.lua now accessible
+- **Improved User Experience**: Intuitive browsing with category counts and search functionality
+- **Fallback Support**: Chat-based menu system when ox_lib is unavailable
 
 ### Version History
-- **v2.0.0** - Database persistence, ox_lib integration, ownership verification
+- **v2.1.0** - Regional categories, enhanced navigation, complete sound library coverage
+- **v2.0.0** - Database persistence, ox_lib integration, ownership verification  
 - **v1.0.0** - Basic engine sound replacement functionality
 
 ### Upcoming Features
-- Sound categories and filtering
 - Custom sound upload system
-- Integration with vehicle modification scripts
+- Integration with vehicle modification scripts  
 - Sound preview functionality
+- Enhanced admin management tools
 
 ## File Structure
 
@@ -373,30 +435,46 @@ D-EngineSound/
 
 ### Common Issues
 
-**Sound not working?**
-- Ensure the vehicle supports custom engine sounds
-- Check that all required dependencies are installed
-- Verify the sound files are properly loaded
+**Sound menu not showing or only showing categories?**
+- Ensure all 100+ sounds are loaded: Check that `config.lua` contains all engine sounds
+- Verify `showCategories = true` in config for category-based menu
+- Restart the resource: `restart D-EngineSound`
 
-**Permission denied?**
+**Category menu shows but sounds are missing?**
+- Check category assignments in `config.lua` - each sound should have a `category` field
+- Verify utility functions are properly loaded in config
+- Ensure server.lua is sending category information to client
+
+**Sound not working in-game?**
+- Ensure the vehicle supports custom engine sounds
+- Check that all required dependencies are installed and running
+- Verify the sound files are properly loaded in fxmanifest.lua
+
+**Permission denied when using `/changesound`?**
 - Confirm the player has admin permissions or mechanic job
 - Check QBX Core is properly configured
-- Verify the permission system is working
+- Verify the permission system is working with `/checkperms`
 
-**Menu not showing?**
-- Ensure ox_lib is installed and running
-- Check for any client-side console errors
-- Verify the resource started correctly
+**Menu navigation issues?**
+- Ensure ox_lib is installed and running (latest version)
+- Check for client-side console errors (F8 menu)
+- Verify the resource started correctly without errors
 
 **Can't change vehicle sound?**
 - Ensure you own the vehicle (it must be in your `player_vehicles` table)
 - Confirm you have admin permissions or mechanic job
 - Check that the vehicle has a valid license plate
 
-**Sounds not persisting?**
+**Sounds not persisting after server restart?**
 - Verify oxmysql is installed and working
-- Check database connection and permissions
+- Check database connection and permissions  
 - Ensure the `custom_sound` column was added to `player_vehicles` table
+- Use `/cleanupsounds` to clean up any orphaned entries
+
+**Fallback menu activating unexpectedly?**
+- Check that ox_lib is properly installed and loaded
+- Verify no errors in ox_lib startup
+- Ensure ox_lib version compatibility with your server
 
 ### Console Commands for Debugging
 ```
