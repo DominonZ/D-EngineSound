@@ -16,14 +16,6 @@ Config.Categories = {
 -- Enable debug mode (shows detailed console output)
 Config.Debug = false
 
--- Resource information
-Config.ResourceInfo = {
-    name = "D-EngineSound",
-    version = "2.1.0",
-    author = "DOMINONZ",
-    description = "Advanced FiveM Engine Sound System with Database Persistence and Modern UI"
-}
-
 -- ═══════════════════════════════════════════════════════════════
 --                        PERMISSION SETTINGS
 -- ═══════════════════════════════════════════════════════════════
