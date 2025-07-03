@@ -1,7 +1,10 @@
 # D-EngineSound - Advanced FiveM Engine Sound System
 
-#NOTE: Got inspired by SpiritCreations his resource can be found here:
+**NOTE: Got inspired by SpiritCreations his resource can be found here:**
 [SpiritCreations](https://github.com/SpiritsCreations/FiveM-Engine-Sound-Pack)
+
+**NOTE: Credit is due to the original sound creators aswell.**
+
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![FiveM](https://img.shields.io/badge/FiveM-Compatible-blue.svg)](https://fivem.net/)
@@ -11,7 +14,7 @@ A comprehensive and advanced FiveM script that allows players to dynamically cha
 
 **[YOUTUBE PREVIEW](https://youtu.be/qvfjIJzuBrI?si=_SCiPEvNy2DJHsnG)**
 
-** If you are an Author and don't want the Engine Sound to be here on GitHub, just create an issue and pull request! **
+**If you are an Author and don't want the Engine Sound to be here on GitHub, just create an issue and pull request!**
 
 ## 🎯 Repository Description
 
@@ -496,9 +499,9 @@ con_miniconChannels script:*
 ## Credits
 
 - **Original Author**: DOMINONZ
-- **Enhanced by**: Custom modifications for QBX Core and ox_lib integration
-- **Audio Sources**: Various high-quality engine sound recordings
-
+- **Enhanced by DOMINONZ with**: Custom modifications for QBX Core and ox_lib integration
+- **Audio Sources**: Various high-quality engine sound recordings from various authors on 5mods.
+- **Script Idea**: SpiritCreations & A friend of mine
 ## License
 
 This script is provided as-is for FiveM server use. Please respect the original audio sources and any applicable licensing terms.
